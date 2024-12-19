@@ -6,7 +6,8 @@ import dayjs from "dayjs";
 export default function TransactionList(props) {
 
   const columns = [
-    { title: "Date-Time", 
+    { 
+      title: "Date-Time", 
       dataIndex: "action_datetime", 
       key: "action_datetime",
       render: (_, record) => dayjs(record.action_datetime).format("DD/MM/YYYY - HH:mm")

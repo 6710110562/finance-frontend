@@ -83,11 +83,11 @@ function FinanceScreen() {
       <header className="App-header">
         <Spin spinning={isLoading}>
           <Typography.Title>
-            à¸ˆà¸³à¸™à¸§à¸™à¹€à¸‡à¸´à¸™à¸›à¸±à¸ˆà¸ˆà¸¸à¸šà¸±à¸™ {summaryAmount} à¸šà¸²à¸—
+            จำนวนเงินปัจจุบัน {summaryAmount} บาท
           </Typography.Title>
 
           <AddItem onItemAdded={handleAddItem} />
-          <Divider>à¸šà¸±à¸™à¸—à¸¶à¸ à¸£à¸²à¸¢à¸£à¸±à¸š - à¸£à¸²à¸¢à¸ˆà¹ˆà¸²à¸¢</Divider>
+          <Divider>บันทึก รายรับ - รายจ่าย</Divider>
           <TransactionList
             data={transactionData}
             onNoteChanged={handleNoteChanged}
