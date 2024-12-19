@@ -22,6 +22,12 @@ export default function TransactionList(props) {
     {
       title: "Action", key: "action", render: (_, record) => (
         <Space size="middle">
+           <Button 
+            type="primary" 
+            shape="circle" 
+            icon={<EditOutlined />} // ปุ่ม Edit
+            onClick={() => props.onRowEdit(record)} // เรียก callback เมื่อกด Edit
+          />
           
           <Popconfirm
             title="Delete the transaction"
@@ -33,16 +39,6 @@ export default function TransactionList(props) {
               shape="circle" 
               icon={<DeleteOutlined />} />
           </Popconfirm>
-          <Button 
-            type="primary" 
-            shape="circle" 
-            icon={<BugOutlined/>} 
-            onClick={() => {
-              Modal.info({
-                title: "Debug",
-                content: JSON.stringify(record)
-              })
-            }}/>
         </Space>
       ), 
     },
