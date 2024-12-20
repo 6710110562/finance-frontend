@@ -13,7 +13,7 @@ function FinanceScreen() {
   const [isLoading, setIsLoading] = useState(false);
   const [transactionData, setTransactionData] = useState([]);
   const [editItem, setEditItem] = useState(null); // เก็บข้อมูลที่ต้องการแก้ไข
-
+  const [form] = Form.useForm();
   const fetchItems = async () => {
     try {
       setIsLoading(true)
@@ -101,38 +101,50 @@ function FinanceScreen() {
         </Spin>
       </header>
 
-      {/* Modal สำหรับแก้ไข */}
-      <Modal
-        title="Edit Transaction"
-        visible={!!editItem}
-        onCancel={() => setEditItem(null)}
-        onOk={() => {
-          const form = document.forms['editForm'];
-          const updatedItem = {
-            ...editItem,
-            type: form.type.value,
-            amount: parseFloat(form.amount.value),
-            note: form.note.value
-          };
-          handleSaveItem(updatedItem);
-        }}
-      >
-        {editItem && (
-          <form id="editForm">
-            <label>Type:</label>
-            <Select defaultValue={editItem.type} name="type" style={{ width: "100%" }}>
-              <Select.Option value="income">Income</Select.Option>
-              <Select.Option value="expense">Expense</Select.Option>
-            </Select>
-            <label>Amount:</label>
-            <Input defaultValue={editItem.amount} name="amount" type="number" />
-            <label>Note:</label>
-            <Input defaultValue={editItem.note} name="note" />
-          </form>
-        )}
-      </Modal>
+      
+  const [form] = Form.useForm();
+
+<Modal
+  title="Edit Transaction"
+  open={!!editItem}
+  onCancel={() => setEditItem(null)}
+  onOk={async () => {
+    try {
+      const values = await form.validateFields();
+      const updatedItem = {
+        ...editItem,
+        ...values,
+      };
+      handleSaveItem(updatedItem);
+    } catch (err) {
+      console.error('Validation Failed:', err);
+    }
+  }}
+  
+>
+{editItem && (
+  <Form form={form} layout="vertical" initialValues={editItem}>
+    <Form.Item name="type" label="Type" rules={[{ required: true, message: 'Please select a type!' }]}>
+      <Select>
+        <Select.Option value="income">Income</Select.Option>
+        <Select.Option value="expense">Expense</Select.Option>
+      </Select>
+    </Form.Item>
+
+    <Form.Item name="amount" label="Amount" rules={[{ required: true, message: 'Please enter an amount!' }]}>
+      <Input type="number" />
+    </Form.Item>
+
+    <Form.Item name="note" label="Note">
+      <Input />
+    </Form.Item>
+  </Form>
+)}
+
+</Modal>
     </div>
   );
 }
 
 export default FinanceScreen;
+
