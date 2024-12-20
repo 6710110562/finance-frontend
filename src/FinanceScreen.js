@@ -1,8 +1,9 @@
 import './App.css';
 import TransactionList from "./components/TransactionList";
+import EditItem from "./components/EditItem"; // Import EditItem
 import { useState, useEffect } from 'react';
 import dayjs from 'dayjs';
-import { Divider, Modal, Form, Input, Select, Spin, Typography } from 'antd';
+import { Divider, Spin, Typography } from 'antd';
 import AddItem from './components/AddItem';
 import axios from 'axios';
 
@@ -13,7 +14,6 @@ function FinanceScreen() {
   const [isLoading, setIsLoading] = useState(false);
   const [transactionData, setTransactionData] = useState([]);
   const [editItem, setEditItem] = useState(null); // เก็บข้อมูลแถวที่ต้องการแก้ไข
-  const [form] = Form.useForm();
 
   // ดึงข้อมูลจาก API
   const fetchItems = async () => {
@@ -52,8 +52,8 @@ function FinanceScreen() {
 
   // แก้ไขข้อมูล
   const handleRowEdit = (item) => {
-    console.log("Editing item:", item); // Debug ข้อมูลแถวที่เลือก
-    setEditItem(item); // อัปเดต editItem
+    console.log("Editing item:", item);
+    setEditItem(item);
   };
 
   const handleSaveItem = async (updatedItem) => {
@@ -61,7 +61,7 @@ function FinanceScreen() {
       setIsLoading(true);
       await axios.put(`${URL_TXACTIONS}/${updatedItem.id}`, { data: updatedItem });
       setTransactionData(transactionData.map(item => item.id === updatedItem.id ? updatedItem : item));
-      setEditItem(null); // ปิด Modal
+      setEditItem(null);
     } catch (err) {
       console.log(err);
     } finally {
@@ -83,11 +83,8 @@ function FinanceScreen() {
   };
 
   useEffect(() => {
-    if (editItem) {
-      console.log("Updating form with editItem:", editItem); // Debug
-      form.setFieldsValue(editItem); // อัปเดตฟอร์ม
-    }
-  }, [editItem, form]);
+    fetchItems();
+  }, []);
 
   useEffect(() => {
     setSummaryAmount(transactionData.reduce(
@@ -115,47 +112,17 @@ function FinanceScreen() {
         </Spin>
       </header>
 
-      {/* Modal สำหรับแก้ไข */}
-      <Modal
-        title="Edit Transaction"
-        open={!!editItem}
+      <EditItem
+        visible={!!editItem}
+        initialValues={editItem}
         onCancel={() => setEditItem(null)}
-        onOk={async () => {
-          try {
-            const values = await form.validateFields();
-            const updatedItem = {
-              ...editItem,
-              ...values,
-            };
-            handleSaveItem(updatedItem);
-          } catch (err) {
-            console.error('Validation Failed:', err);
-          }
-        }}
-      >
-        {editItem && (
-          <Form form={form} layout="vertical" initialValues={editItem}>
-            <Form.Item name="type" label="Type" rules={[{ required: true, message: 'Please select a type!' }]}>
-              <Select>
-                <Select.Option value="income">Income</Select.Option>
-                <Select.Option value="expense">Expense</Select.Option>
-              </Select>
-            </Form.Item>
-
-            <Form.Item name="amount" label="Amount" rules={[{ required: true, message: 'Please enter an amount!' }]}>
-              <Input type="number" />
-            </Form.Item>
-
-            <Form.Item name="note" label="Note">
-              <Input />
-            </Form.Item>
-          </Form>
-        )}
-      </Modal>
+        onSave={handleSaveItem}
+      />
     </div>
   );
 }
 
 export default FinanceScreen;
+
 
 

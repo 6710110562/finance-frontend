@@ -31,7 +31,7 @@ export default function TransactionList(props) {
             shape="circle" 
             icon={<EditOutlined />} 
             onClick={() => {
-              console.log("Selected record for edit:", record); // Debug
+              console.log("Selected record for edit:", record);
               props.onRowEdit(record);
             }}
           />
