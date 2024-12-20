@@ -1,10 +1,9 @@
-import React from "react"
-import { Button, Table, Space, Tag, Popconfirm, Modal } from "antd"
-import { DeleteOutlined,EditOutlined } from '@ant-design/icons'; 
+import React from "react";
+import { Button, Table, Space, Tag, Popconfirm } from "antd";
+import { DeleteOutlined, EditOutlined } from '@ant-design/icons'; 
 import dayjs from "dayjs";
 
 export default function TransactionList(props) {
-
   const columns = [
     { 
       title: "Date-Time", 
@@ -13,40 +12,51 @@ export default function TransactionList(props) {
       render: (_, record) => dayjs(record.action_datetime).format("DD/MM/YYYY - HH:mm")
     },
     { 
-      title: "Type", dataIndex: "type", key: "type", render: (_, record) => (
+      title: "Type", 
+      dataIndex: "type", 
+      key: "type", 
+      render: (_, record) => (
         <Tag color={record.type === "income" ? 'green' : 'red'}>{record.type}</Tag>
       ) 
     },
     { title: "Amount", dataIndex: "amount", key: "amount" },
     { title: "Note", dataIndex: "note", key: "note" },
     {
-      title: "Action", key: "action", render: (_, record) => (
+      title: "Action", 
+      key: "action", 
+      render: (_, record) => (
         <Space size="middle">
-           <Button 
+          <Button 
             type="primary" 
             shape="circle" 
-            icon={<EditOutlined />} // ปุ่ม Edit
-            onClick={() => props.onRowEdit(record)} // เรียก callback เมื่อกด Edit
+            icon={<EditOutlined />} 
+            onClick={() => {
+              console.log("Selected record for edit:", record); // Debug
+              props.onRowEdit(record);
+            }}
           />
-          
           <Popconfirm
             title="Delete the transaction"
-            description="Are you sure to delete this transaction?"
             onConfirm={() => props.onRowDeleted(record.id)}
           >
-            <Button danger 
+            <Button 
+              danger 
               type="primary" 
               shape="circle" 
-              icon={<DeleteOutlined />} />
+              icon={<DeleteOutlined />} 
+            />
           </Popconfirm>
         </Space>
       ), 
     },
-  ]
+  ];
 
   return (
-    <>
-    <Table columns={columns} dataSource={props.data}/>
-    </>
-  )
+    <Table 
+      dataSource={props.data} 
+      columns={columns} 
+      rowKey="id" 
+    />
+  );
 }
+
